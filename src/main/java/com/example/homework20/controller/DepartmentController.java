@@ -1,5 +1,6 @@
 package com.example.homework20.controller;
 
+import com.example.homework20.model.Employee;
 import com.example.homework20.service.DepartmentService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,20 +17,20 @@ public class DepartmentController {
     }
 
     @GetMapping(path = "/max-salary")
-    public String getEmployeeWithMaxSalary(@RequestParam("departmentId") int departmentId) {
+    public Employee getEmployeeWithMaxSalary(@RequestParam("departmentId") int departmentId) {
         return service.getEmployeeWithMaxSalary(departmentId);
     }
 
     @GetMapping(path = "/min-salary")
-    public String getEmployeeWithMinSalary(@RequestParam("departmentId") int departmentId) {
+    public Employee getEmployeeWithMinSalary(@RequestParam("departmentId") int departmentId) {
         return service.getEmployeeWithMinSalary(departmentId);
     }
 
     @GetMapping(path = "/all")
-    public String printAllEmployees(@RequestParam(name = "departmentId", required = false) Integer departmentId) {
+    public Object printAllEmployees(@RequestParam(name = "departmentId", required = false) Integer departmentId) {
         if (departmentId != null)
-            return service.printAllEmployees(departmentId);
+            return service.getAllEmployees(departmentId);
         else
-            return service.printAllEmployeesByDepartments();
+            return service.getAllEmployeesByDepartments();
     }
 }

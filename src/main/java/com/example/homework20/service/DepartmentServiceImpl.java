@@ -3,51 +3,51 @@ package com.example.homework20.service;
 import com.example.homework20.exceptions.EmployeeNotFoundException;
 import com.example.homework20.model.Employee;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.example.homework20.repositories.Employees.employees;
 
 @org.springframework.stereotype.Service
 public class DepartmentServiceImpl implements DepartmentService {
 
+    private final EmployeeService employeeService;
+
+    public DepartmentServiceImpl(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
+
     @Override
-    public String getEmployeeWithMinSalary(int department) {
-        return employees.values().stream()
+    public Employee getEmployeeWithMinSalary(int department) {
+        return employeeService.list().stream()
                 .filter(e -> e.getDepartment() == department)
                 .min(Comparator.comparingInt(Employee::getSalary))
-                .orElseThrow(EmployeeNotFoundException::new)
-                .toString();
+                .orElseThrow(EmployeeNotFoundException::new);
     }
 
     @Override
-    public String getEmployeeWithMaxSalary(int department) {
-        return employees.values().stream()
+    public Employee getEmployeeWithMaxSalary(int department) {
+        return employeeService.list().stream()
                 .filter(e -> e.getDepartment() == department)
                 .max(Comparator.comparingInt(Employee::getSalary))
-                .orElseThrow(EmployeeNotFoundException::new)
-                .toString();
+                .orElseThrow(EmployeeNotFoundException::new);
     }
 
     @Override
-    public String printAllEmployees(int department) {
-        StringBuilder builder = new StringBuilder("<b>Сотрудники " + department + " отдела:</b>");
-        employees.values().stream()
+    public List<Employee> getAllEmployees(int department) {
+        return employeeService.list().stream()
                 .filter(e -> e.getDepartment() == department)
-                .forEach(e -> builder.append("<br>").append(e.toStringWithoutDepartment()));
-        return builder.toString();
+                .collect(Collectors.toList());
     }
 
     @Override
-    public String printAllEmployeesByDepartments() {
-        StringBuilder builder = new StringBuilder();
-        getAllDepartments().forEach(d -> builder.append(printAllEmployees(d)).append("<br>"));
-        return builder.toString();
+    public Map<Integer, ArrayList<Employee>> getAllEmployeesByDepartments() {
+        HashMap<Integer, ArrayList<Employee>> map = new HashMap<>();
+        getAllDepartments().forEach(d -> map.put(d, new ArrayList<>()));
+        employeeService.list().forEach(e -> map.get(e.getDepartment()).add(e));
+        return map;
     }
 
     public List<Integer> getAllDepartments() {
-        return employees.values().stream()
+        return employeeService.list().stream()
                 .map(Employee::getDepartment)
                 .distinct()
                 .sorted()

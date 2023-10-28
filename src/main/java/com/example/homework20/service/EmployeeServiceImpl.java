@@ -5,11 +5,15 @@ import com.example.homework20.exceptions.EmployeeNotFoundException;
 import com.example.homework20.exceptions.EmployeeStorageIsFullException;
 import com.example.homework20.model.Employee;
 
-import static com.example.homework20.repositories.Employees.MAX;
-import static com.example.homework20.repositories.Employees.employees;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @org.springframework.stereotype.Service
 public class EmployeeServiceImpl implements EmployeeService {
+    final int MAX = 15;
+    private final Map<String, Employee> employees = new HashMap<>();
 
     @Override
     public void populate() {
@@ -26,7 +30,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public String add(String firstName, String lastName, int department, int salary) {
+    public Employee add(String firstName, String lastName, int department, int salary) {
         if (employees.size() >= MAX)
             throw new EmployeeStorageIsFullException();
 
@@ -35,33 +39,31 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = new Employee(firstName, lastName, department, salary);
         employees.put(getKey(firstName, lastName), employee);
-        return employee.toString();
+        return employee;
     }
 
     @Override
-    public String remove(String firstName, String lastName) {
+    public Employee remove(String firstName, String lastName) {
         Employee employee = getEmployee(firstName, lastName);
         if (employee == null)
             throw new EmployeeNotFoundException();
 
         employees.remove(getKey(firstName, lastName));
-        return employee.toString();
+        return employee;
     }
 
     @Override
-    public String find(String firstName, String lastName) {
+    public Employee find(String firstName, String lastName) {
         Employee employee = getEmployee(firstName, lastName);
         if (employee == null)
             throw new EmployeeNotFoundException();
 
-        return employee.toString();
+        return employee;
     }
 
     @Override
-    public String list() {
-        StringBuilder builder = new StringBuilder("<b>Сотрудники:</b>");
-        employees.values().forEach(e -> builder.append("<br>").append(e.toString()));
-        return builder.toString();
+    public List<Employee> list() {
+        return new ArrayList<>(employees.values());
     }
 
     public Employee getEmployee(String firstName, String lastName) {
