@@ -39,11 +39,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Map<Integer, ArrayList<Employee>> getAllEmployeesByDepartments() {
-        HashMap<Integer, ArrayList<Employee>> map = new HashMap<>();
-        getAllDepartments().forEach(d -> map.put(d, new ArrayList<>()));
-        employeeService.list().forEach(e -> map.get(e.getDepartment()).add(e));
-        return map;
+    public Map<Integer, List<Employee>> getAllEmployeesByDepartments() {
+        return employeeService.list().stream().collect(Collectors.groupingBy(Employee::getDepartment));
     }
 
     public List<Integer> getAllDepartments() {
