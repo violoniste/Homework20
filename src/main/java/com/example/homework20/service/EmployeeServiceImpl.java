@@ -1,9 +1,11 @@
 package com.example.homework20.service;
 
+import com.example.homework20.exceptions.BadRequestException;
 import com.example.homework20.exceptions.EmployeeAlreadyAddedException;
 import com.example.homework20.exceptions.EmployeeNotFoundException;
 import com.example.homework20.exceptions.EmployeeStorageIsFullException;
 import com.example.homework20.model.Employee;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +33,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee add(String firstName, String lastName, int department, int salary) {
+        check(firstName);
+        check(lastName);
+
+        firstName = StringUtils.capitalize(firstName);
+        lastName = StringUtils.capitalize(lastName);
+
         if (employees.size() >= MAX)
             throw new EmployeeStorageIsFullException();
 
@@ -44,6 +52,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee remove(String firstName, String lastName) {
+        check(firstName);
+        check(lastName);
+
         Employee employee = getEmployee(firstName, lastName);
         if (employee == null)
             throw new EmployeeNotFoundException();
@@ -54,6 +65,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee find(String firstName, String lastName) {
+        check(firstName);
+        check(lastName);
+
         Employee employee = getEmployee(firstName, lastName);
         if (employee == null)
             throw new EmployeeNotFoundException();
@@ -67,10 +81,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public Employee getEmployee(String firstName, String lastName) {
+        check(firstName);
+        check(lastName);
+
         return employees.get(getKey(firstName, lastName));
     }
 
     private String getKey(String firstName, String lastName) {
         return firstName + lastName;
+    }
+
+    private void check(String str) {
+        if (!StringUtils.isAlpha(str))
+            throw new BadRequestException();
     }
 }
