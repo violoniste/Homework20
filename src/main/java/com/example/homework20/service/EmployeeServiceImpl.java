@@ -18,20 +18,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final Map<String, Employee> employees = new HashMap<>();
 
     @Override
-    public void populate() {
-        add("Иван", "Иванович", 1, 5000);
-        add("Василий", "Петрович", 4, 2000);
-        add("Михаил", "Васильевич", 3, 7000);
-        add("Клубника", "Николаевна", 2, 7000);
-        add("Вишня", "Владимировна", 3, 4000);
-        add("Курага", "Петровна", 2, 8000);
-        add("Чернослив", "Михайлович", 1, 5000);
-        add("Миндаль", "Иванович", 5, 3000);
-        add("Фундук", "Петрович", 2, 7000);
-        add("Вальдемар", "Иванович", 1, 300000);
-    }
-
-    @Override
     public Employee add(String firstName, String lastName, int department, int salary) {
         check(firstName);
         check(lastName);

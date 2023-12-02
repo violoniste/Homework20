@@ -16,38 +16,40 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Employee getEmployeeWithMinSalary(int department) {
+    public List<Employee> getEmployees(int department) {
+        return employeeService.list().stream()
+                .filter(e -> e.getDepartment() == department)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getSalarySum(int department) {
+        return employeeService.list().stream()
+                .filter(e -> e.getDepartment() == department)
+                .mapToInt(Employee::getSalary)
+                .sum();
+    }
+
+    @Override
+    public int getSalaryMin(int department) {
         return employeeService.list().stream()
                 .filter(e -> e.getDepartment() == department)
                 .min(Comparator.comparingInt(Employee::getSalary))
-                .orElseThrow(EmployeeNotFoundException::new);
+                .orElseThrow(EmployeeNotFoundException::new)
+                .getSalary();
     }
 
     @Override
-    public Employee getEmployeeWithMaxSalary(int department) {
+    public int getSalaryMax(int department) {
         return employeeService.list().stream()
                 .filter(e -> e.getDepartment() == department)
                 .max(Comparator.comparingInt(Employee::getSalary))
-                .orElseThrow(EmployeeNotFoundException::new);
+                .orElseThrow(EmployeeNotFoundException::new)
+                .getSalary();
     }
 
     @Override
-    public List<Employee> getAllEmployees(int department) {
-        return employeeService.list().stream()
-                .filter(e -> e.getDepartment() == department)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Map<Integer, List<Employee>> getAllEmployeesByDepartments() {
+    public Map<Integer, List<Employee>> getEmployees() {
         return employeeService.list().stream().collect(Collectors.groupingBy(Employee::getDepartment));
-    }
-
-    public List<Integer> getAllDepartments() {
-        return employeeService.list().stream()
-                .map(Employee::getDepartment)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
     }
 }
